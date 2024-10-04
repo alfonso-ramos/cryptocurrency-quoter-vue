@@ -1,50 +1,15 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed} from "vue";
+import { ref, reactive} from "vue";
 import Alerta from "./components/alerta.vue";
 import Spinner from "./components/Spinner.vue";
 import useCripto from "./composable/useCripto";
-const monedas = ref([
-  { codigo: "USD", texto: "Dolar de Estados Unidos" },
-  { codigo: "MXN", texto: "Peso Mexicano" },
-  { codigo: "EUR", texto: "Euro" },
-  { codigo: "GBP", texto: "Libra Esterlina" },
-]);
 
-const criptomonedas = ref([])
+const { monedas,criptomonedas,cotizacion,cargando,obtenerCotizacion, mostrarResultado} = useCripto()
+
 const error = ref('')
 const cotizar = reactive({
   moneda: "",
   criptomoneda: "",
-})
-const cotizacion = ref({})
-const cargando = ref(false)
-
-onMounted(() => {
-  const url =
-    "https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD";
-  fetch(url)
-    .then((response) => response.json())
-    .then(({ Data }) => {
-      criptomonedas.value = Data;
-    });
-});
-const obtenerCotizacion =  async () => {
-  cargando.value = true
-  cotizacion.value = {}
-  const { moneda, criptomoneda } = cotizar
-  const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${criptomoneda}&tsyms=${moneda}`
-  console.log(url)
-
-  const response = await fetch(url)
-  const data = await response.json()
-
-  cotizacion.value = data.DISPLAY[criptomoneda][moneda]
-  cargando.value = false
-
-}
-
-const mostrarResultado = computed(() => {
-  return Object.values(cotizacion.value).length > 0
 })
 
 const cotizarCripto = () => {
@@ -53,7 +18,7 @@ const cotizarCripto = () => {
     return
   }
   error.value = ''
-  obtenerCotizacion()
+  obtenerCotizacion(cotizar)
 };
 </script>
 
