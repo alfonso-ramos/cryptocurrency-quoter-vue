@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, computed} from "vue";
 import Alerta from "./components/alerta.vue";
-
+import Spinner from "./components/Spinner.vue";
+import useCripto from "./composable/useCripto";
 const monedas = ref([
   { codigo: "USD", texto: "Dolar de Estados Unidos" },
   { codigo: "MXN", texto: "Peso Mexicano" },
@@ -14,8 +15,9 @@ const error = ref('')
 const cotizar = reactive({
   moneda: "",
   criptomoneda: "",
-});
+})
 const cotizacion = ref({})
+const cargando = ref(false)
 
 onMounted(() => {
   const url =
@@ -27,15 +29,23 @@ onMounted(() => {
     });
 });
 const obtenerCotizacion =  async () => {
+  cargando.value = true
+  cotizacion.value = {}
   const { moneda, criptomoneda } = cotizar
   const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${criptomoneda}&tsyms=${moneda}`
   console.log(url)
 
   const response = await fetch(url)
   const data = await response.json()
-  console.log(data.DISPLAY[criptomoneda][moneda])
+
   cotizacion.value = data.DISPLAY[criptomoneda][moneda]
+  cargando.value = false
+
 }
+
+const mostrarResultado = computed(() => {
+  return Object.values(cotizacion.value).length > 0
+})
 
 const cotizarCripto = () => {
   if (Object.values(cotizar).includes("")) {
@@ -73,6 +83,22 @@ const cotizarCripto = () => {
 
         <input type="submit" value="Cotizar" />
       </form>
+
+      <Spinner v-if="cargando"/>
+      
+      <div v-if="mostrarResultado" class="contenedor-resultado">
+        <h2>Cotizacion</h2>
+        <div class="resultado">
+          <img :src="'https://cryptocompare.com' + cotizacion.IMAGEURL" alt="imagen Cripto">
+          <div>
+            <p>El precio es de: <span>{{ cotizacion.PRICE }}</span></p>
+            <p>El precio mas alto del dia: <span>{{ cotizacion.HIGHDAY }}</span></p>
+            <p>El precio mas bajo del dia: <span>{{ cotizacion.LOWDAY }}</span></p>
+            <p>Variacion ultimas 24 horas: <span>{{ cotizacion.CHANGEPCT24HOUR }}%</span></p>
+            <p>Ultima actualizacion: <span>{{ cotizacion.LASTUPDATE }}</span></p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
