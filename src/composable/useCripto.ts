@@ -1,4 +1,5 @@
 import { ref, onMounted, computed } from "vue";
+import { Cotizacion, Criptomoneda } from "../types";
 
 export default function useCripto() {
 
@@ -9,7 +10,7 @@ export default function useCripto() {
         { codigo: "GBP", texto: "Libra Esterlina" },
     ]);
 
-    const criptomonedas = ref([])
+    const criptomonedas = ref([] as Criptomoneda[])
 
     onMounted(() => {
         const url =
@@ -20,12 +21,12 @@ export default function useCripto() {
                 criptomonedas.value = Data;
             });
     });
-    const cotizacion = ref({})
+    const cotizacion = ref({} as Cotizacion)
     const cargando = ref(false)
 
-    const obtenerCotizacion = async (cotizar) => {
+    const obtenerCotizacion = async (cotizar: { moneda: string; criptomoneda: string; }) => {
         cargando.value = true
-        cotizacion.value = {}
+        cotizacion.value = {} as Cotizacion
         const { moneda, criptomoneda } = cotizar
         const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${criptomoneda}&tsyms=${moneda}`
 
@@ -34,8 +35,6 @@ export default function useCripto() {
 
         cotizacion.value = data.DISPLAY[criptomoneda][moneda]
         cargando.value = false
-
-
     }
     
     const mostrarResultado = computed(() => {

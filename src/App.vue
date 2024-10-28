@@ -20,6 +20,8 @@ const cotizarCripto = () => {
   error.value = ''
   obtenerCotizacion(cotizar)
 };
+
+
 </script>
 
 <template>
@@ -31,7 +33,7 @@ const cotizarCripto = () => {
         <label for="moneda">Moneda</label>
         <select v-model="cotizar.moneda" id="moneda">
           <option value="">--- SELECCIONA ---</option>
-          <option v-for="moneda in monedas" :value="moneda.codigo">
+          <option v-for="moneda in monedas" :key="moneda.codigo" :value="moneda.codigo">
             {{ moneda.texto }}
           </option>
         </select>
@@ -39,7 +41,8 @@ const cotizarCripto = () => {
         <select v-model="cotizar.criptomoneda" id="cripto">
           <option value="">--- SELECCIONA ---</option>
           <option
-            v-for="criptomoneda in criptomonedas"
+          v-for="criptomoneda in criptomonedas"
+          :key="criptomoneda.CoinInfo.Name"
             :value="criptomoneda.CoinInfo.Name"
           >
             {{ criptomoneda.CoinInfo.FullName }}

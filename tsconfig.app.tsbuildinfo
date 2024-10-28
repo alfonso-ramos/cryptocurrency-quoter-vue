@@ -1,0 +1,1 @@
+{"root":["./src/main.ts","./src/vite-env.d.ts","./src/composable/useCripto.ts","./src/types/index.ts","./src/App.vue","./src/components/Spinner.vue","./src/components/alerta.vue"],"version":"5.6.2"}
